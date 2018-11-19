@@ -77,6 +77,6 @@ def PA_strategy(graph):
 graph = run_simulation(100, PA_strategy, 0.7)
 print(graph)
 
-nx.draw(nx.DiGraph(graph))
+nx.draw(nx.Graph(graph))
 plt.draw()
 plt.show()
