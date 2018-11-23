@@ -55,13 +55,11 @@ def connect_or_defer(requester, host, graph, alpha, random_walk=False):
   """
   rand = random.random()
   if rand <= alpha:
-    print('wooga')
     graph.get(requester).append(host)
     graph.get(host).append(requester)
   else:
     # Choose a random neighbor to defer to
     defer_node = random.randint(0, len(graph[host]))
-    print('deferring')
     if random_walk:
       # We continue the random walk with probability (1 - alpha)
       return connect_or_defer(requester, defer_node, graph, alpha, random_walk)
