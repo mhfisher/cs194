@@ -19,10 +19,10 @@ what this secondary strategy would be.
 
 * What strategies are reasonable choices for a node other than PA?
 
-1. Choose the most popular node.
-2. Choose a node of average popularity (hedge your connection likelihood).
-3. Use Tempered Preferential Attachment
-4. Look at Lemma 4.15 for other suggestions.
+  1. Choose the most popular node.
+  2. Choose a node of average popularity (hedge your connection likelihood).
+  3. Use Tempered Preferential Attachment
+  4. Look at Lemma 4.15 for other suggestions.
 
 
 
