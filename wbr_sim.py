@@ -111,25 +111,23 @@ def PA_vs_uniform(num_players, num_trials, alpha, PA_fraction):
                                          strategy_choices, alpha, random_walk=False))
 
     # Now we reverse strategies to calculate difference in utilities.
-    strategy_choices = [1 if i == 0 else 0 for i in range(len(strategy_choices))]
+    reversed_strategy_choices = [1 if strategy_choices[i] == 0 else 0 for i in range(len(strategy_choices))]
 
-    flipped_utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100,
+    reversed_utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100,
                                          strategy_funcs, strategy_choices,
                                          alpha, random_walk=False))
 
     # The difficult thing is that we have to compare like nodes to like nodes
     # Since a random subset was chosen to play PA, we have to match that
     # to the exact same random subset playing uniform choice.
+    print(strategy_choices)
+    print(utility_dict)
     PA_array = [utility_dict[i] if strategy_choices[i] == 0 else 0 for i in range(len(utility_dict))]
-    uniform_array = [flipped_utility_dict[i] if strategy_choices[i] == 1 \
+    uniform_array = [reversed_utility_dict[i] if reversed_strategy_choices[i] == 1 \
                       else 0 for i in range(len(utility_dict))]
     diff_array = [PA_array[i] - uniform_array[i] for i in range(len(PA_array))]
-    # utility_diff = []
-    # for i in range(len(utility_dict)):
-    #   if utility_dict[i] == helpers.PA_strategy:
-    #     utility_diff.append(utility_dict[i] - flipped_utility_dict[i])
-    #   else:
-    #     utility_diff.append(flipped_utility_dict[i] - utility_dict[i])
+    # print(PA_array)
+    print(uniform_array)
 
     for i in range(len(diff_array)):
       utility_diff_over_time[i] = utility_diff_over_time[i] + diff_array[i]
@@ -142,7 +140,7 @@ def PA_vs_uniform(num_players, num_trials, alpha, PA_fraction):
   plt.show()
 
 alpha = lambda x, y: 0.5
-PA_vs_uniform(100, 10, alpha, 0.5)
+PA_vs_uniform(100, 10, alpha, 0.7)
 # Print average difference in utility
 # print(utility_diff_array)
 # print(sum(utility_diff_array))
