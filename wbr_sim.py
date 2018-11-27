@@ -42,9 +42,6 @@ def fine_tuned_simulation(num_players, num_trials, strategy_functions, strategy_
     for node in graph.keys():
       utility_dict[node].append(len(graph[node]))
 
-  # Last node has zero utility and makes calculations confusing
-  utility_dict.pop(num_players - 1)
-
   return utility_dict
 
 
@@ -109,30 +106,37 @@ def PA_vs_uniform(num_players, num_trials, alpha, PA_fraction):
   for i in range(num_trials):
     strategy_choices = strategy_pool[i]
 
-
-    # Run this strategy array for 10 trials.
-    utility_dict = helpers.total_utility(fine_tuned_simulation(num_players, 100, strategy_funcs,
+    # Run this strategy array for 100 trials.
+    utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100, strategy_funcs,
                                          strategy_choices, alpha, random_walk=False))
 
     # Now we reverse strategies to calculate difference in utilities.
     strategy_choices = [1 if i == 0 else 0 for i in range(len(strategy_choices))]
 
-    flipped_utility_dict = helpers.total_utility(fine_tuned_simulation(num_players, 100,
+    flipped_utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100,
                                          strategy_funcs, strategy_choices,
                                          alpha, random_walk=False))
 
-    utility_diff = []
-    for i in range(len(utility_dict)):
-      if utility_dict[i] == helpers.PA_strategy:
-        utility_diff.append(utility_dict[i] - flipped_utility_dict[i])
-      else:
-        utility_diff.append(flipped_utility_dict[i] - utility_dict[i])
+    # The difficult thing is that we have to compare like nodes to like nodes
+    # Since a random subset was chosen to play PA, we have to match that
+    # to the exact same random subset playing uniform choice.
+    PA_array = [utility_dict[i] if strategy_choices[i] == 0 else 0 for i in range(len(utility_dict))]
+    uniform_array = [flipped_utility_dict[i] if strategy_choices[i] == 1 \
+                      else 0 for i in range(len(utility_dict))]
+    diff_array = [PA_array[i] - uniform_array[i] for i in range(len(PA_array))]
+    # utility_diff = []
+    # for i in range(len(utility_dict)):
+    #   if utility_dict[i] == helpers.PA_strategy:
+    #     utility_diff.append(utility_dict[i] - flipped_utility_dict[i])
+    #   else:
+    #     utility_diff.append(flipped_utility_dict[i] - utility_dict[i])
 
-    utility_diff_over_time = [utility_diff_over_time[i] + utility_diff[i] \
-                                for i in range(len(utility_diff))]
+    for i in range(len(diff_array)):
+      utility_diff_over_time[i] = utility_diff_over_time[i] + diff_array[i]
 
+  # print(np.mean(utility_diff_over_time))
   # Plot utility difference by node
-  plt.plot(utility_diff_over_time)
+  plt.plot(utility_diff_over_time[:(num_players // 2)])
   print(utility_diff_over_time)
   print(sum(utility_diff_over_time))
   plt.show()
