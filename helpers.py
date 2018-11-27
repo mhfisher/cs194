@@ -1,4 +1,5 @@
 """Helper functions"""
+import numpy as np
 import random
 
 def connect_or_defer(requester, host, graph, alpha_function, random_walk=False):
@@ -40,6 +41,18 @@ def comparative_utility(graph1, graph2, subset):
   for node in subset:
     utility_dict[node] = graph1.degree(node) - graph2.degree(node)
   return utility_dict
+
+def avg_utility(utility_dict):
+  """
+  Return avg_utility_dict
+  """
+  return dict([(key, np.mean(utility_dict[key])) for key in utility_dict])
+
+def total_utility(utility_dict):
+  """
+  Return total utility dict
+  """
+  return dict([(key, sum(utility_dict[key])) for key in utility_dict])
 
 # Strategy functions
 
