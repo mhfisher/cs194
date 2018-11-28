@@ -81,10 +81,11 @@ def paper_simulation(num_players, alpha):
   Run the traditional game as presented in the paper.
   Returns average utility array and returns avg_utility_array
   """
-  PA_dict = [helpers.PA_strategy]
-  strategy_array = [0 for i in range(100)]
-  result = fine_tuned_simulation(100, 10, PA_dict, strategy_array,
-                                 alpha_function, random_walk=False)
+  # PA_array = [helpers.PA_strategy]
+  unif_array = [helpers.uniform_strategy]
+  strategy_array = [0 for i in range(num_players)]
+  result = fine_tuned_simulation(num_players, 100, unif_array, strategy_array,
+                                 alpha, random_walk=True)
 
   avg_utility_array = [helpers.avg_utility(result)[i] for i in range(len(result))]
 
@@ -118,12 +119,5 @@ def optimal_PA(num_players, num_trials, alpha, odd_node):
   print(PA_avg_utiity)
 
 
-alpha = lambda x, y: 0.5
-optimal_PA(1000, 100, alpha, 5)
-# Print average difference in utility
-# print(utility_diff_array)
-# print(sum(utility_diff_array))
-
-# nx.draw(nx.Graph(graph))
-# plt.draw()
-# plt.show()
+alpha = lambda x, y: 0.7
+optimal_PA(100, 1000, alpha, 10)
