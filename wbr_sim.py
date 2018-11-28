@@ -91,56 +91,35 @@ def paper_simulation(num_players, alpha):
   return avg_utility_array
 
 
-def PA_vs_uniform(num_players, num_trials, alpha, PA_fraction):
+def optimal_PA(num_players, num_trials, alpha, odd_node):
   """
-  Run the simulation with PA_fraction * num_players playing PA,
-  (1 - PA_fraction) * num_players choose a host uniformly.
+  Have one node not play PA.
   """
-  uniform_strategy = lambda graph: [(1.0 / len(graph)) for i in range(len(graph))]
-  strategy_funcs = [helpers.PA_strategy, uniform_strategy]
+  strategy_funcs = [helpers.PA_strategy, helpers.pick_leaf]
 
-  utility_diff_over_time = [0 for i in range(num_players)]
-  strategy_pool = np.random.choice([0, 1], p=[float(PA_fraction), 1.0 - PA_fraction],
-                    size=num_players*num_trials).reshape(num_trials, num_players)
+  strategy_choices = [0 for i in range(num_players)]
+  strategy_choices[odd_node] = 1
 
-  for i in range(num_trials):
-    strategy_choices = strategy_pool[i]
+  result_graph = fine_tuned_simulation(num_players, num_trials, strategy_funcs, strategy_choices,
+                        alpha, random_walk=False)
+  print(helpers.avg_utility(result_graph))
+  # plt.plot([value for value in helpers.avg_utility(result_graph).values()])
+  # plt.show()
 
-    # Run this strategy array for 100 trials.
-    utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100, strategy_funcs,
-                                         strategy_choices, alpha, random_walk=False))
+  non_PA_avg_utility = np.mean(result_graph[odd_node])
 
-    # Now we reverse strategies to calculate difference in utilities.
-    reversed_strategy_choices = [1 if strategy_choices[i] == 0 else 0 for i in range(len(strategy_choices))]
+  strategy_choices[odd_node] = 0
+  result_graph = fine_tuned_simulation(num_players, num_trials, strategy_funcs, strategy_choices,
+                        alpha, random_walk=False)
 
-    reversed_utility_dict = helpers.avg_utility(fine_tuned_simulation(num_players, 100,
-                                         strategy_funcs, strategy_choices,
-                                         alpha, random_walk=False))
+  PA_avg_utiity = np.mean(result_graph[odd_node])
 
-    # The difficult thing is that we have to compare like nodes to like nodes
-    # Since a random subset was chosen to play PA, we have to match that
-    # to the exact same random subset playing uniform choice.
-    print(strategy_choices)
-    print(utility_dict)
-    PA_array = [utility_dict[i] if strategy_choices[i] == 0 else 0 for i in range(len(utility_dict))]
-    uniform_array = [reversed_utility_dict[i] if reversed_strategy_choices[i] == 1 \
-                      else 0 for i in range(len(utility_dict))]
-    diff_array = [PA_array[i] - uniform_array[i] for i in range(len(PA_array))]
-    # print(PA_array)
-    print(uniform_array)
+  print(non_PA_avg_utility)
+  print(PA_avg_utiity)
 
-    for i in range(len(diff_array)):
-      utility_diff_over_time[i] = utility_diff_over_time[i] + diff_array[i]
-
-  # print(np.mean(utility_diff_over_time))
-  # Plot utility difference by node
-  plt.plot(utility_diff_over_time[:(num_players // 2)])
-  print(utility_diff_over_time)
-  print(sum(utility_diff_over_time))
-  plt.show()
 
 alpha = lambda x, y: 0.5
-PA_vs_uniform(100, 10, alpha, 0.7)
+optimal_PA(1000, 100, alpha, 5)
 # Print average difference in utility
 # print(utility_diff_array)
 # print(sum(utility_diff_array))

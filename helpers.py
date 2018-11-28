@@ -68,3 +68,13 @@ def PA_strategy(graph):
 
   return probability_array
 
+def pick_leaf(graph):
+  """
+  """
+  probability_array = [0 for i in range(len(graph))]
+  for i in range(len(graph)):
+    if len(graph[i]) == 1:
+      probability_array[i] = 1
+      return probability_array
+
+uniform_strategy = lambda graph: [(1.0 / len(graph)) for i in range(len(graph))]
