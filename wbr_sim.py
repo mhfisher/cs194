@@ -94,18 +94,17 @@ def paper_simulation(num_players, alpha):
 
 def optimal_PA(num_players, num_trials, alpha, odd_node):
   """
-  Have one node not play PA.
+  Have one node not play PA. Assess the change in utility if that node plays
+  PA instead.
   """
-  strategy_funcs = [helpers.PA_strategy, helpers.pick_leaf]
+  # strategy_funcs = [helpers.PA_strategy, helpers.pick_leaf]
+  strategy_funcs = [helpers.uniform_strategy]
 
   strategy_choices = [0 for i in range(num_players)]
-  strategy_choices[odd_node] = 1
+  # strategy_choices[odd_node] = 1
 
   result_graph = fine_tuned_simulation(num_players, num_trials, strategy_funcs, strategy_choices,
                         alpha, random_walk=False)
-  print(helpers.avg_utility(result_graph))
-  # plt.plot([value for value in helpers.avg_utility(result_graph).values()])
-  # plt.show()
 
   non_PA_avg_utility = np.mean(result_graph[odd_node])
 
@@ -115,9 +114,11 @@ def optimal_PA(num_players, num_trials, alpha, odd_node):
 
   PA_avg_utiity = np.mean(result_graph[odd_node])
 
-  print(non_PA_avg_utility)
-  print(PA_avg_utiity)
+  print('Number of nodes: {}'.format(num_players))
+  print('Number of trials: {}'.format(num_trials))
+  print('Uniform Random Choice avg utility: {}'.format(non_PA_avg_utility))
+  print('PA Strategy avg utility {}'.format(PA_avg_utiity))
 
 
-alpha = lambda x, y: 0.7
-optimal_PA(100, 1000, alpha, 10)
+alpha = lambda x, y: 0.3
+# optimal_PA(10000, 100, alpha, 10)
