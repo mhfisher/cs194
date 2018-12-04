@@ -12,7 +12,6 @@ def draw_result(result):
   nx.draw_kamada_kawai(nx.Graph(result))
   plt.show()
 
-
 # num_players = 100
 # strategies = [helpers.PA_strategy]
 # strategy_choices = [0 for i in range(num_players)]
