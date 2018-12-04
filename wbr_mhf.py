@@ -19,7 +19,7 @@ strategy_choices = [0 for i in range(num_players)]
 high_alpha = lambda x, y: 0.75
 result_high_alpha = wbr_sim.run_simulation(num_players, strategies, strategy_choices,
                                 high_alpha, random_walk=False)
-draw_result(result_high_alpha)
+# draw_result(result_high_alpha)
 
 
 low_alpha = lambda x, y: 0.25
@@ -37,32 +37,52 @@ degree_array = [np.mean(result_uniform[i]) for i in range(num_players)]
 
 """Log Plots"""
 num_players = 1000
-high_alpha = lambda x, y: 0.4
-num_trials = 10
+high_alpha = lambda x, y: 0.3
+num_trials = 1
 strategies = [helpers.uniform_strategy]
 strategy_choices = [0 for i in range(num_players)]
 
 result = wbr_sim.fine_tuned_simulation(num_players, num_trials, strategies, strategy_choices,
                           high_alpha, random_walk=False)
 
-# Plot avg utility vs node number
-result_mean = [helpers.avg_utility(result)[node] for node in helpers.avg_utility(result).keys()]
-y_axis = [node for node in range(len(result))]
-print(result_mean)
-print(y_axis)
-plt.plot(y_axis, result_mean)
-plt.ylabel('Node Utility')
-plt.xlabel('Node Position')
-plt.show()
-exit()
+# Examine distribution
+degree_array = []
+for node in result:
+  degree_array += result[node]
 
-# Loglog plot
-plt.plot(np.log(result_mean), np.log(y_axis), 'ro')
-plt.title('Power Law, Utility as a function of Node Entry Time')
-plt.ylabel('Node Entry Time')
-plt.xlabel('Node Utility')
-plt.show()
-exit()
+result_mean = np.mean(degree_array)
+result_std_dev = np.std(degree_array)
+print(result_mean)
+print(result_std_dev)
+within_std_dev = 0
+for d in degree_array:
+  if d >= (result_mean - result_std_dev) and d <= (result_mean + result_std_dev):
+    within_std_dev += 1
+
+print(within_std_dev)
+print(within_std_dev / float(len(degree_array)))
+
+# Plot avg utility vs node number
+result_mean = [helpers.avg_utility(result)[node]
+                for node in helpers.avg_utility(result).keys()]
+
+
+# y_axis = [node for node in range(len(result))]
+# print(result_mean)
+# print(y_axis)
+# plt.plot(y_axis, result_mean)
+# plt.ylabel('Node Utility')
+# plt.xlabel('Node Position')
+# plt.show()
+# exit()
+
+# # Loglog plot
+# plt.plot(np.log(result_mean), np.log(y_axis), 'ro')
+# plt.title('Power Law, Utility as a function of Node Entry Time')
+# plt.ylabel('Node Entry Time')
+# plt.xlabel('Node Utility')
+# plt.show()
+# exit()
 
 # degree_array = [np.mean(result[i]) for i in range(num_players)]
 # print(degree_array)
@@ -89,6 +109,7 @@ lists = sorted(degree_counts.items())
 x, y = zip(*lists)
 
 plt.loglog(x, y, 'ro')
+# plt.plot(x, y, 'ro')
 plt.show()
 
 
