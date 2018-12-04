@@ -77,4 +77,6 @@ def pick_leaf(graph):
       probability_array[i] = 1
       return probability_array
 
-uniform_strategy = lambda graph: [(1.0 / len(graph)) for i in range(len(graph))]
+def uniform_strategy(graph):
+  """Pick a node uniformly at random"""
+  return [(1.0 / len(graph)) for i in range(len(graph))]

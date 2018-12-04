@@ -71,7 +71,7 @@ def run_simulation(num_nodes, strategy_functions, strategy_choices,
 
     # Update the graph with this node's host
     graph = helpers.connect_or_defer(new_node, chosen_host, graph, alpha_function,
-                                   random_walk)
+                                     random_walk)
 
   return graph
 
@@ -98,7 +98,7 @@ def optimal_PA(num_players, num_trials, alpha, odd_node):
   PA instead.
   """
   # strategy_funcs = [helpers.PA_strategy, helpers.pick_leaf]
-  strategy_funcs = [helpers.uniform_strategy]
+  strategy_funcs = [helpers.PA_strategy]
 
   strategy_choices = [0 for i in range(num_players)]
   # strategy_choices[odd_node] = 1
