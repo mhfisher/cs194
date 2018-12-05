@@ -88,7 +88,7 @@ def plot_cdf(utility_dict, strategy, alpha, color='ro'):
 
 
 num_players = 1000
-alpha = lambda x, y: 0
+alpha = lambda x, y: 0.25
 num_trials = 1
 strategies = [helpers.PA_strategy]
 strategy_choices = [0 for i in range(num_players)]
@@ -99,6 +99,7 @@ result = wbr_sim.fine_tuned_simulation(
     strategies,
     strategy_choices,
     alpha,
+    # Results are very interesting if you turn on random walk
     random_walk=False)
 
 result2 = wbr_sim.fine_tuned_simulation(
