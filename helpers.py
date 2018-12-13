@@ -2,7 +2,7 @@
 import numpy as np
 import random
 
-def connect_or_defer(requester, host, graph, alpha_function, random_walk=False):
+def connect_or_defer(requester, host, graph, alpha, random_walk=False):
   """
   Assigns requester to host with probability alpha.
   Assigns requester to one of host's neighbors with probability (1 - alpha).
@@ -14,7 +14,6 @@ def connect_or_defer(requester, host, graph, alpha_function, random_walk=False):
   Returns the new state of the graph.
   """
   rand = random.random()
-  alpha = alpha_function(host, graph)
   if rand <= alpha:
     graph.get(requester).append(host)
     graph.get(host).append(requester)

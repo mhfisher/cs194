@@ -7,7 +7,7 @@ import numpy as np
 import helpers
 
 def fine_tuned_simulation(num_players, num_trials, strategy_functions, strategy_choices,
-                          alpha_function, random_walk=False):
+                          alpha, random_walk=False):
   """
   Run WBR simulation with more granularity for controlling input parameters.
   Returns a utility_dict where utility_dict[i] is an array with
@@ -21,10 +21,10 @@ def fine_tuned_simulation(num_players, num_trials, strategy_functions, strategy_
     various strategy functions nodes can play.
 
   :param strategy_choices (int array): strategy_functions[strategy_choices[i]]
-    yields the strategy that node i will play
+    yields the strategy that node i will play.
 
-  :param alpha_function (returns 0-1 float): Should be f(node, graph) that returns
-    alpha value for a particular node. The paper has uniform constant alpha for all nodes.
+  :param alpha (float, 0 < alpha < 1): Defines the probability a request will be
+    accepted.
 
   :param player_range (int tuple): Simulation will be run with player_range[0]
     through player_range[1] players, therefore run player_range[1] - player-range[0] times.
@@ -35,7 +35,7 @@ def fine_tuned_simulation(num_players, num_trials, strategy_functions, strategy_
   graph_array = []
   for i in range(num_trials):
     graph_array.append(run_simulation(num_players, strategy_functions, strategy_choices,
-                                        alpha_function, random_walk))
+                                        alpha, random_walk))
 
   utility_dict = dict([(i, []) for i in range(num_players)])
   for graph in graph_array:
@@ -46,7 +46,7 @@ def fine_tuned_simulation(num_players, num_trials, strategy_functions, strategy_
 
 
 def run_simulation(num_nodes, strategy_functions, strategy_choices,
-                   alpha_function, random_walk=False):
+                   alpha, random_walk=False):
   """
   Method to run WBR simulation.
   Now a helper function for fine_tuned_simulation.
@@ -56,8 +56,8 @@ def run_simulation(num_nodes, strategy_functions, strategy_choices,
 
   # Turn 3 (arbitrary choice)
   graph.update({2: []})
-  graph = helpers.connect_or_defer(2, 0, graph, alpha_function) if random.random() < 0.5 else \
-          helpers.connect_or_defer(2, 1, graph, alpha_function)
+  graph = helpers.connect_or_defer(2, 0, graph, alpha) if random.random() < 0.5 else \
+          helpers.connect_or_defer(2, 1, graph, alpha)
 
   # Turn 4 onwards
   for new_node in range(3, num_nodes):
@@ -70,7 +70,7 @@ def run_simulation(num_nodes, strategy_functions, strategy_choices,
     graph.update({new_node: []})
 
     # Update the graph with this node's host
-    graph = helpers.connect_or_defer(new_node, chosen_host, graph, alpha_function,
+    graph = helpers.connect_or_defer(new_node, chosen_host, graph, alpha,
                                      random_walk)
 
   return graph
@@ -118,7 +118,3 @@ def optimal_PA(num_players, num_trials, alpha, odd_node):
   print('Number of trials: {}'.format(num_trials))
   print('Uniform Random Choice avg utility: {}'.format(non_PA_avg_utility))
   print('PA Strategy avg utility {}'.format(PA_avg_utiity))
-
-
-alpha = lambda x, y: 0.3
-# optimal_PA(10000, 100, alpha, 10)
