@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import scipy.stats
+import math
 
 import helpers
 import wbr_sim
@@ -77,18 +78,23 @@ def plot_cdf(utility_dict, strategy, alpha, color='ro'):
         remaining_observations = remaining_observations - pair[1]
 
     x, y = zip(*tuple_array)
+    log_x = [math.log10(x_t) for x_t in x]
+    log_cdf_array = [math.log10(c_t) for c_t in cdf_array]
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(log_x, log_cdf_array)
+    exp, coeff = slope, math.pow(10, intercept)
 
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x, y)
-    plt.loglog(x, cdf_array, color)
-    plt.loglog(x, [intercept + (slope*x_i) for x_i in x], 'b')
-    print(slope)
-    print(intercept)
-    print(r_value)
-    print(p_value)
-    # plt.loglog(degree_array, [degree_array[i] for i in degree_array], color)
+    label_str = 'r squared: ' + str(round(r_value**2, 3))
+    plt.loglog(x, [coeff*(math.pow(x_i, exp)) for x_i in x], 'b', label=label_str)
+    plt.loglog(x, cdf_array, 'ro')
+
+    print('slope:', slope)
+    print('intercept:', intercept)
+    print('r_value:', r_value)
+    print('p_value:', p_value)
     plt.xlabel('Degree Value')
     plt.ylabel('Number of Occurrences >= x')
     plt.title('CDF Plot, Strategy: {0}, Alpha: {1}'.format(strategy, alpha))
+    plt.legend(loc="upper right")
     plt.show()
 
 
